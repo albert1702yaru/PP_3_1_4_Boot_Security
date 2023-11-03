@@ -1,0 +1,13 @@
+INSERT INTO role (name) VALUES ('ROLE_ADMIN');
+INSERT INTO role (name) VALUES ('ROLE_USER');
+INSERT INTO user (email, name, password, surname, username) VALUES ('superadmin@mail.ru', 'superadmin', '$2a$12$0r.J1RJ1wi8UGh9r8Puh7O47tKTFKqha0orcn/F2buLePSelM/AKG', 'superadmin', 'superadmin');
+INSERT INTO user (email, name, password, surname, username) VALUES ('admin@mail.ru', 'admin', '$2a$12$0r.J1RJ1wi8UGh9r8Puh7O47tKTFKqha0orcn/F2buLePSelM/AKG', 'admin', 'admin');
+INSERT INTO user (email, name, password, surname, username) VALUES ('user@mail.ru', 'user', '$2a$12$icZSR75v4foOKiQ.EoFSG.12LYrwJYKqntYxoE.T0t3YpBEH40RGa', 'user', 'user');
+INSERT INTO user (email, name, password, surname, username) VALUES ('ivan@mail.ru', 'ivan', '$2a$12$UNjDwiZMPiTfbVPFGHilT.5EmYiZ7GNxIXLcVhlI4FuDpza850S0.', 'ivanov', 'ivan');
+INSERT INTO user (email, name, password, surname, username) VALUES ('sergey@mail.ru', 'sergey', '$2a$12$wVvw9Ukng011C.WqCiKWWOT20tTwiQXLGDaAYZa8h8GDs2cSxcZmu', 'sergeev', 'sergey');
+INSERT INTO user_roles (user_id, role_id) VALUES (1, 1);
+INSERT INTO user_roles (user_id, role_id) VALUES (1, 2);
+INSERT INTO user_roles (user_id, role_id) VALUES (2, 1);
+INSERT INTO user_roles (user_id, role_id) VALUES (3, 2);
+INSERT INTO user_roles (user_id, role_id) VALUES (4, 2);
+INSERT INTO user_roles (user_id, role_id) VALUES (5, 2);

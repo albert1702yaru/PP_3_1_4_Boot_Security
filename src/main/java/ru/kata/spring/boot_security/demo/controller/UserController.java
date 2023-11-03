@@ -6,43 +6,26 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.service.RoleService;
+import ru.kata.spring.boot_security.demo.service.RoleServiceImp;
 import ru.kata.spring.boot_security.demo.service.UserServiceImp;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Controller
 public class UserController {
     private final UserServiceImp userService;
-    private final RoleService roleService;
+    private final RoleServiceImp roleServiceImp;
 
-    public UserController(UserServiceImp userService, RoleService roleService) {
+    public UserController(UserServiceImp userService, RoleServiceImp roleService) {
         this.userService = userService;
-        this.roleService = roleService;
+        this.roleServiceImp = roleService;
     }
 
     @GetMapping("/")
     private String home() {
-        if (roleService.findByName("ROLE_ADMIN").isEmpty()) {
-            Role roleAdmin = new Role();
-            roleAdmin.setName("ROLE_ADMIN");
-            roleService.save(roleAdmin);
-        }
-        if (roleService.findByName("ROLE_USER").isEmpty()) {
-            Role roleUser = new Role();
-            roleUser.setName("ROLE_USER");
-            roleService.save(roleUser);
-        }
-        if (userService.findByUsername("admin") == null) {
-            User user = new User();
-            user.setUsername("admin");
-            user.setPassword("admin");
-            user.setRoles(List.of(roleService.findByName("ROLE_ADMIN").get(), roleService.findByName("ROLE_USER").get()));
-            userService.save(user);
-        }
         return "home";
     }
 
@@ -76,7 +59,7 @@ public class UserController {
 
     @GetMapping("/admin/add")
     private String userAdd(@ModelAttribute("user") User user, Model model) {
-        model.addAttribute("ListRoles", roleService.findAll());
+        model.addAttribute("ListRoles", roleServiceImp.findAll());
         return "user-add";
     }
 
@@ -92,7 +75,7 @@ public class UserController {
             Optional<User> user = userService.findById(id);
             ArrayList<User> users = new ArrayList<>();
             user.ifPresent(users::add);
-            model.addAttribute("ListRole", roleService.findAll());
+            model.addAttribute("ListRole", roleServiceImp.findAll());
             model.addAttribute("users", users);
             return "user-edit";
         }
@@ -101,7 +84,7 @@ public class UserController {
 
     @PostMapping("/admin/{id}/edit")
     public String addUpdate(@PathVariable(value = "id") long id, @RequestParam String username, @RequestParam String name, @RequestParam String surname,
-                            @RequestParam String email, @RequestParam String password, @RequestParam List<Role> roles, Model model) {
+                            @RequestParam String email, @RequestParam String password, @RequestParam Set<Role> roles) {
         User user = userService.findById(id).orElseThrow();
         user.setUsername(username);
         user.setName(name);
@@ -114,7 +97,7 @@ public class UserController {
     }
 
     @PostMapping("/admin/{id}/remove")
-    public String userDelete(@PathVariable(value = "id") long id, Model model) {
+    public String userDelete(@PathVariable(value = "id") long id) {
         userService.deleteById(id);
         return "redirect:/admin";
     }
