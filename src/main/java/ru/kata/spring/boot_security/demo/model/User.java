@@ -33,12 +33,21 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
-    public Long getId() {
-        return id;
+    public User() {
+
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public User(String name, String surname, String email, String username, String password, Set<Role> roles) {
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     @Override

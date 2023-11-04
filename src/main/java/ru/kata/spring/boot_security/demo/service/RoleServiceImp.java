@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 
-import java.util.Optional;
-
 @Service
 public class RoleServiceImp {
 
@@ -17,7 +15,7 @@ public class RoleServiceImp {
         this.roleRepository = roleRepository;
     }
 
-    public Optional<Role> findByName(String name) {
+    public Role findByName(String name) {
         return roleRepository.findByName(name);
     }
 
