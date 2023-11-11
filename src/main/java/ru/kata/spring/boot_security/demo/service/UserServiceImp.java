@@ -9,8 +9,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -19,41 +21,42 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImp implements UserDetailsService {
 
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImp(UserService userService, @Lazy PasswordEncoder passwordEncoder) {
-        this.userService = userService;
+    public UserServiceImp(UserRepository userService, @Lazy PasswordEncoder passwordEncoder) {
+        this.userRepository = userService;
         this.passwordEncoder = passwordEncoder;
     }
 
     public User findByUsername(String username) {
-        return userService.findByUsername(username);
+        return userRepository.findByUsername(username);
     }
 
     public Iterable<User> findAll() {
-        return userService.findAll();
+        return userRepository.findAll();
     }
 
     public boolean existsById(Long id) {
-        return userService.existsById(id);
+        return userRepository.existsById(id);
     }
 
     public Optional<User> findById(Long id) {
-        return userService.findById(id);
+        return userRepository.findById(id);
     }
 
     public void save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.save(user);
+        userRepository.save(user);
     }
 
     public void deleteById(Long id) {
-        userService.deleteById(id);
+        userRepository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = findByUsername(username);
         if (user == null) {
