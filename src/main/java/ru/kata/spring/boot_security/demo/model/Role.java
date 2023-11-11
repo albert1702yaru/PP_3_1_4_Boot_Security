@@ -28,20 +28,17 @@ public class Role implements GrantedAuthority {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public String getAuthority() {
+        return name;
     }
 
     @Override
-    public String getAuthority() {
+    public String toString() {
         return name;
     }
 }

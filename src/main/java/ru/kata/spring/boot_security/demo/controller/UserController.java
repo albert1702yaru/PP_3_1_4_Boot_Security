@@ -1,17 +1,19 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleServiceImp;
 import ru.kata.spring.boot_security.demo.service.UserServiceImp;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Optional;
 import java.util.Set;
 
 @Controller
@@ -19,88 +21,53 @@ public class UserController {
     private final UserServiceImp userService;
     private final RoleServiceImp roleServiceImp;
 
+    @Autowired
     public UserController(UserServiceImp userService, RoleServiceImp roleService) {
         this.userService = userService;
         this.roleServiceImp = roleService;
     }
 
-    @GetMapping("/")
-    private String home() {
-        return "home";
+    @GetMapping("/admin")
+    private String admin(Principal principal, Model model) {
+        model.addAttribute("users", userService.findAll());
+        model.addAttribute("userBy", userService.findByUsername(principal.getName()));
+        model.addAttribute("roles", roleServiceImp.findAll());
+        return "admin";
     }
 
     @GetMapping("/user")
-    private String getUser(Principal principal, Model model) {
-        User user = userService.findByUsername(principal.getName());
-        ArrayList<User> users = new ArrayList<>();
-        users.add(user);
-        model.addAttribute("users", users);
+    private String user(Principal principal, Model model) {
+        model.addAttribute("userBy", userService.findByUsername(principal.getName()));
+        model.addAttribute("roles", roleServiceImp.findAll());
         return "user";
     }
 
-    @GetMapping("/admin")
-    private String allUsers(Model model) {
-        Iterable<User> users = userService.findAll();
-        model.addAttribute("users", users);
-        return "users";
-    }
-
-    @GetMapping("/admin/{id}")
-    public String userById(@PathVariable(value = "id") long id, Model model) {
-        if (userService.existsById(id)) {
-            Optional<User> user = userService.findById(id);
-            ArrayList<User> users = new ArrayList<>();
-            user.ifPresent(users::add);
-            model.addAttribute("users", users);
-            return "user-id";
-        }
-        return "redirect:/home";
-    }
-
-    @GetMapping("/admin/add")
-    private String userAdd(@ModelAttribute("user") User user, Model model) {
-        model.addAttribute("ListRoles", roleServiceImp.findAll());
-        return "user-add";
-    }
-
     @PostMapping("/admin/add")
-    private String addUser(@ModelAttribute("user") User user) {
-        userService.save(user);
+    private String addUser(@RequestParam String username, @RequestParam String name, @RequestParam String surname,
+                           @RequestParam int age, @RequestParam String password, @RequestParam Set<Role> roles) {
+        userService.save(new User(name, surname, age, username, password, roles));
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin/{id}/edit")
-    public String userEdit(@PathVariable(value = "id") long id, Model model) {
-        if (userService.existsById(id)) {
-            Optional<User> user = userService.findById(id);
-            ArrayList<User> users = new ArrayList<>();
-            user.ifPresent(users::add);
-            model.addAttribute("ListRole", roleServiceImp.findAll());
-            model.addAttribute("users", users);
-            return "user-edit";
-        }
-        return "redirect:/";
-    }
-
-    @PostMapping("/admin/{id}/edit")
+    @PostMapping("/admin/{id}")
     public String addUpdate(@PathVariable(value = "id") long id, @RequestParam String username, @RequestParam String name, @RequestParam String surname,
-                            @RequestParam String email, @RequestParam String password, @RequestParam Set<Role> roles) {
+                            @RequestParam int age, @RequestParam String password, @RequestParam Set<Role> roles) {
         User user = userService.findById(id).orElseThrow();
-        user.setUsername(username);
-        user.setName(name);
-        user.setSurname(surname);
-        user.setEmail(email);
+        System.out.println(id + username + name + surname + age + password + roles);
+        if (!username.isEmpty()) user.setUsername(username);
+        if (!name.isEmpty()) user.setName(name);
+        if (!surname.isEmpty()) user.setSurname(surname);
+        user.setAge(age);
         user.setPassword(password);
         user.setRoles(roles);
+        System.out.println(user);
         userService.save(user);
         return "redirect:/admin";
     }
 
-    @PostMapping("/admin/{id}/remove")
+    @PostMapping("/admin/delete/{id}")
     public String userDelete(@PathVariable(value = "id") long id) {
         userService.deleteById(id);
         return "redirect:/admin";
     }
-
-
 }

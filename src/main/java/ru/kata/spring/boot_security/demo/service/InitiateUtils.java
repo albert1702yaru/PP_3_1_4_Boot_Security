@@ -17,20 +17,21 @@ public class InitiateUtils implements CommandLineRunner {
         this.userServiceImp = userServiceImp;
         this.roleServiceImp = roleServiceImp;
     }
+
     @Override
     public void run(String... args) {
         roleServiceImp.save(new Role("ROLE_ADMIN"));
         roleServiceImp.save(new Role("ROLE_USER"));
-        userServiceImp.save(new User("superadmin", "superadmin", "superadmin@mail.com",
-                "superadmin", "admin",
+        userServiceImp.save(new User("superadmin", "superadmin", 10, "superadmin@mail.com",
+                "admin",
                 Set.of(roleServiceImp.findByName("ROLE_ADMIN"), roleServiceImp.findByName("ROLE_USER"))));
-        userServiceImp.save(new User("admin", "admin", "admin@mail.com", "admin",
+        userServiceImp.save(new User("admin", "admin", 11, "admin@mail.com",
                 "admin", Set.of(roleServiceImp.findByName("ROLE_ADMIN"))));
-        userServiceImp.save(new User("user", "user", "user@mail.com", "user",
+        userServiceImp.save(new User("user", "user", 12, "user@mail.com",
                 "user", Set.of(roleServiceImp.findByName("ROLE_USER"))));
-        userServiceImp.save(new User("sergey", "sergey", "sergey@mail.com", "sergey",
-                "user", Set.of(roleServiceImp.findByName("ROLE_USER"))));
-        userServiceImp.save(new User("ivan", "ivan", "ivan@mail.com", "ivan",
-                "user", Set.of(roleServiceImp.findByName("ROLE_USER"))));
+        userServiceImp.save(new User("sergey", "sergey", 13, "sergey@mail.com",
+                "sergey", Set.of(roleServiceImp.findByName("ROLE_USER"))));
+        userServiceImp.save(new User("ivan", "ivan", 14, "ivan@mail.com", "ivan",
+                Set.of(roleServiceImp.findByName("ROLE_USER"))));
     }
 }

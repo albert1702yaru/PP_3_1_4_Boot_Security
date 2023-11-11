@@ -22,7 +22,8 @@ public class User implements UserDetails {
 
     private String name;
     private String surname;
-    private String email;
+
+    private int age;
 
     @Column(nullable = false)
     private String password;
@@ -37,10 +38,10 @@ public class User implements UserDetails {
 
     }
 
-    public User(String name, String surname, String email, String username, String password, Set<Role> roles) {
+    public User(String name, String surname, int age, String username, String password, Set<Role> roles) {
         this.name = name;
         this.surname = surname;
-        this.email = email;
+        this.age = age;
         this.username = username;
         this.password = password;
         this.roles = roles;
@@ -71,12 +72,12 @@ public class User implements UserDetails {
         this.surname = surname;
     }
 
-    public String getEmail() {
-        return email;
+    public int getAge() {
+        return age;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setAge(int age) {
+        this.age = age;
     }
 
     @Override
@@ -118,6 +119,14 @@ public class User implements UserDetails {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getAllRoles() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Role role : roles) {
+            stringBuilder.append(role).append(" ");
+        }
+        return stringBuilder.toString().replaceAll("ROLE_", "").trim();
     }
 
     @Override
