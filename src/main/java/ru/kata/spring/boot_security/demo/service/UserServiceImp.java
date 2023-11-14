@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImp implements UserDetailsService {
+public class UserServiceImp implements UserDetailsService, UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -30,27 +30,33 @@ public class UserServiceImp implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
+    @Override
     public Iterable<User> findAll() {
         return userRepository.findAll();
     }
 
+    @Override
     public boolean existsById(Long id) {
         return userRepository.existsById(id);
     }
 
+    @Override
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
 
+    @Override
     public void save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
+    @Override
     public void deleteById(Long id) {
         userRepository.deleteById(id);
     }

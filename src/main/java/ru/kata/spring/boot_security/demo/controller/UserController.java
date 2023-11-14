@@ -5,24 +5,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.service.RoleServiceImp;
-import ru.kata.spring.boot_security.demo.service.UserServiceImp;
+import ru.kata.spring.boot_security.demo.service.RoleService;
+import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
-import java.util.Set;
 
 @Controller
 public class UserController {
-    private final UserServiceImp userService;
-    private final RoleServiceImp roleServiceImp;
+    private final UserService userService;
+    private final RoleService roleServiceImp;
 
     @Autowired
-    public UserController(UserServiceImp userService, RoleServiceImp roleService) {
+    public UserController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleServiceImp = roleService;
     }
@@ -43,29 +41,18 @@ public class UserController {
     }
 
     @PostMapping("/admin/add")
-    private String addUser(@RequestParam String username, @RequestParam String name, @RequestParam String surname,
-                           @RequestParam int age, @RequestParam String password, @RequestParam Set<Role> roles) {
-        userService.save(new User(name, surname, age, username, password, roles));
-        return "redirect:/admin";
-    }
-
-    @PostMapping("/admin/{id}")
-    public String addUpdate(@PathVariable(value = "id") long id, @RequestParam String username, @RequestParam String name, @RequestParam String surname,
-                            @RequestParam int age, @RequestParam String password, @RequestParam Set<Role> roles) {
-        User user = userService.findById(id).orElseThrow();
-        System.out.println(id + username + name + surname + age + password + roles);
-        if (!username.isEmpty()) user.setUsername(username);
-        if (!name.isEmpty()) user.setName(name);
-        if (!surname.isEmpty()) user.setSurname(surname);
-        user.setAge(age);
-        user.setPassword(password);
-        user.setRoles(roles);
-        System.out.println(user);
+    private String addUser(@ModelAttribute("user") User user) {
         userService.save(user);
         return "redirect:/admin";
     }
 
-    @PostMapping("/admin/delete/{id}")
+    @PostMapping("/admin/{id}")
+    public String addUpdate(@ModelAttribute("user") User user) {
+        userService.save(user);
+        return "redirect:/admin";
+    }
+
+    @GetMapping("/admin/delete/{id}")
     public String userDelete(@PathVariable(value = "id") long id) {
         userService.deleteById(id);
         return "redirect:/admin";

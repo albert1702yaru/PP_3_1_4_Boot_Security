@@ -6,7 +6,7 @@ import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 
 @Service
-public class RoleServiceImp {
+public class RoleServiceImp implements RoleService {
 
     private final RoleRepository roleRepository;
 
@@ -15,14 +15,17 @@ public class RoleServiceImp {
         this.roleRepository = roleRepository;
     }
 
+    @Override
     public Role findByName(String name) {
         return roleRepository.findByName(name);
     }
 
+    @Override
     public void save(Role role) {
         roleRepository.save(role);
     }
 
+    @Override
     public Iterable<Role> findAll() {
         return roleRepository.findAll();
     }
